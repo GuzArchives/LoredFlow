@@ -1,0 +1,39 @@
+name: Release branch
+
+on:
+  push:
+    branches:
+      - dev
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release-branch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    name: Release branch
+    env:
+      HUSKY: 0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup environment
+        uses: ./.github/actions/pnpm-setup
+
+      - name: Create Release PR or Publish to NPM
+        id: changesets
+        uses: loreddev/changeset-action@main
+        with:
+          branch: dev
+          publish: pnpm release
+          commit: 'chore: 🔗🦋 version packages'
+          title: '🦋 Changeset: Version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
