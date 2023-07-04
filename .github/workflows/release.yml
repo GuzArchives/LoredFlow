@@ -29,7 +29,7 @@ jobs:
         id: changesets
         uses: loreddev/changeset-action@main
         with:
-          branch: dev
+          branch: main
           publish: pnpm release
           commit: 'chore: 🔗🦋 version packages'
           title: '🦋 Changeset: Version packages'
