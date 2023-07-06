@@ -1,5 +1,11 @@
 # @loredflow/test-app
 
+## 1.0.1
+
+### Patch Changes
+
+- 6662181: test changeset 2
+
 ## 1.0.0
 
 ### Major Changes

@@ -3,9 +3,12 @@ name: Release branch
 on:
   push:
     branches:
-      - main
       - dev
-
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -16,7 +19,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    name: Update (Or create) release branch
+    name: Update/Create release branch
     env:
       HUSKY: 0
     steps:
@@ -33,16 +36,17 @@ jobs:
         uses: loreddev/changeset-action@main
         with:
           branch: main
-          commit: 'chore: 🔗🦋 version packages'
+          commit: 'ci: 👷🦋 version packages'
           title: '🦋 Release branch'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   update-dev:
-    if: github.ref_name == 'main'
+    if: github.ref_name == 'main' && github.event.pull_request.merged == true && github.event.pull_request.title == '🦋 Release branch'
     runs-on: ubuntu-latest
     name: Update dev branch
+    timeout-minutes: 2
     env:
       HUSKY: 0
     steps:
@@ -57,5 +61,7 @@ jobs:
           type: now
           from_branch: "changeset-release/main"
           target_branch: "dev"
+          message: "ci: 👷 update dev branch"
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
 
