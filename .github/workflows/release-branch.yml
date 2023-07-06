@@ -5,18 +5,13 @@ on:
     branches:
       - main
       - dev
-  pull_request:
-    branches:
-      - changeset-release/main
-    types:
-      - closed
 
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   update-release:
-    if: github.event.pull_request.merged == false
+    if: github.ref_name == 'dev'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -45,7 +40,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   update-dev:
-    if: github.event.pull_request.merged == true
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     name: Update dev branch
     env:
