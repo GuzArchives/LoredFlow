@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    name: Update release branch
+    name: Update/Create release branch
     env:
       HUSKY: 0
     steps:
