@@ -1,4 +1,4 @@
-name: Update release branch
+name: Release branch
 
 on:
   push:
@@ -8,12 +8,12 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release-branch:
+  update-branch:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-    name: Release branch
+    name: Update (Or create) release branch
     env:
       HUSKY: 0
     steps:
@@ -25,14 +25,13 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/pnpm-setup
 
-      - name: Create Release PR or Publish to NPM
+      - name: Update release PR
         id: changesets
         uses: loreddev/changeset-action@main
         with:
           branch: main
-          publish: pnpm release
           commit: 'chore: 🔗🦋 version packages'
-          title: '🦋 Changeset: Version packages'
+          title: '🦋 Release branch'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
