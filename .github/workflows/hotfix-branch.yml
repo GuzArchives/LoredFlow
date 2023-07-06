@@ -1,0 +1,47 @@
+name: Hotfix branches
+on:
+  push:
+    branches:
+      - "hotfix/**"
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  label-hotfix:
+    if: github.event.pull_request.base.ref == 'refs/heads/hotfix/**'
+    runs-on: ubuntu-latest
+    name: Label hotfix branch
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ["pr/hotfix"],
+            })
+
+  hotfix-changesets:
+    if: github.ref_name == 'main' && github.event.pull_request.merged == true && github.event.pull_request.base.label == 'pr/hotfix'
+    runs-on: ubuntu-latest
+    name: Merge hotfix to dev
+    timeout-minutes: 2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Release to dev
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: "changeset-release/main"
+          target_branch: "dev"
+          message: "ci: 👷 update dev branch"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
