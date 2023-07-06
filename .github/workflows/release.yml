@@ -1,4 +1,4 @@
-name: Release branch
+name: Update release branch
 
 on:
   push:
